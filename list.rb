@@ -1,4 +1,7 @@
+
 # Simple linked list node, note it has only one pointer looking forward
+
+require 'pry'
 
 class Node
 	attr_accessor :data, :next
@@ -19,7 +22,6 @@ class List
 		@head = Node.new(args.shift)
 		pointer = @head
 		while args != []
-			p args
 			pointer.next = Node.new(args.shift)
 			pointer = pointer.next
 		end
@@ -39,15 +41,18 @@ class List
 		end
 	end
 
-	def print
+	def pretty_print
 		pointer = @head
+		print "< "
 		while pointer
-			puts pointer.data
+			print pointer.data
+			print " -> "
 			pointer = pointer.next
 		end
+		puts "nil >"
 	end
 
-	def is_present(data)
+	def include?(data)
 		pointer = @head
 		while pointer
 			if pointer.data == data
@@ -68,12 +73,14 @@ class List
 		return result
 	end
 
-	def each
-		# Yet to be implemented
-	end
-
-	def uniq
-		# Yet to be implemented
+	def to_s
+		result = ""
+		pointer = @head
+		while pointer
+			result << pointer.data.to_s
+			pointer = pointer.next
+		end
+		return result
 	end
 
 	def reverse
@@ -93,50 +100,126 @@ class List
 			@head = pointer
 			@head.next = previous
 		end
-	end
-
-	def rotate
-		# Yet to be implemented
-	end
-
-	def sort
-		# Yet to be implemented
+		return pretty_print
 	end
 
 	# Inserts an item at the end of the list
 	def push(data)
 		pointer = @head
 		previous = @head
-		while pointer.next
-			pointer = pointer.next
+		if @head == nil # Empty list
+			@head = Node.new(data)
+		else
+			while pointer.next
+				pointer = pointer.next
+			end
+			pointer.next = Node.new(data)
 		end
-		pointer.next = Node.new(data)
+		return pretty_print
 	end
 
 	def pop
-		# Yet to be implemented
+		pointer = @head
+		if @head == nil
+		elsif @head.next == nil
+			@head = nil
+		else
+			while pointer.next
+				previous = pointer
+				pointer = pointer.next
+			end
+			previous.next = nil
+		end
+		return pretty_print
 	end
 
 	def shift
+		if @head
+			result = @head.data
+			@head = @head.next
+			return result
+		else
+			return nil
+		end
+	end
+
+	def unshift(data)
+		pointer = @head
+		@head = Node.new(data)
+		@head.next = pointer
+		return pretty_print
+	end
+
+	def each
 		# Yet to be implemented
 	end
 
-	def unshift
+	def uniq
 		# Yet to be implemented
 	end
 
-	# Returns the data at the nth node (starting at 0)
+	# Shifts values in the list to the left by number, values that fall off the front of the list are added back to the rear
+	def rotate_left(number)
+		pointer = @head
+		while pointer.next			
+			pointer = pointer.next
+		end
+		pointer.next = @head # Make the list circular
+
+		pointer2 = @head
+		previous = pointer2
+		number.times do
+			previous = pointer2
+			pointer2 = pointer2.next
+		end
+
+		@head = pointer2
+		previous.next = nil
+
+		return pretty_print
+	end
+
+	def rotate_right(number)
+		rotate_left(length - number)
+	end
+
+	# This is a bit of a cheat, I want to manipulate the list directly without resorting to other data structures
+	def sort
+		unsorted = to_a
+		sorted = unsorted.sort
+		pointer = @head
+		while pointer
+			pointer.data = sorted.shift
+			pointer = pointer.next
+		end
+		return pretty_print
+	end
+
+	# Returns the data at the nth node (starting at 1)
 	def get(index)
-		# Yet to be implemented
-	end
-
-	# Returns the data at the nth node (starting at 0)
-	def del(index)
-		# Yet to be implemented
+		pointer = @head
+		if index > 0
+			index -= 1
+			counter = 0
+			while counter < index
+				if !pointer
+					return nil
+				end
+				pointer = pointer.next
+				counter += 1
+			end
+			if pointer
+				return pointer.data
+			else
+				return nil
+			end
+		else
+			return nil
+		end
 	end
 
 	# Will add new_data after the node containing the first instance of data in the list
-	def insert_after(data, new_data)
+	def insert(data, new_data)
 		pointer = @head
 		while pointer
 			if pointer.data == data
@@ -147,7 +230,31 @@ class List
 			end
 			pointer = pointer.next
 		end
-		print_error
+		return false
+	end
+
+	# Will inject a set of values into the list after index, creating a new node for each value given
+	# NEEDS DEBUGGING AND INVALID INDEX CHECKING
+	def inject(index, *args)
+		# Create the new list segment
+		start = Node.new(args.shift)
+		pointer = start
+		while args != []
+			pointer.next = Node.new(args.shift)
+			pointer = pointer.next
+		end
+		finish = pointer
+
+		pointer = @head
+		index -= 1
+		index.times do
+			pointer = pointer.next
+		end
+
+		finish.next = pointer.next
+		pointer.next = start
+
+		return pretty_print
 	end
 
 	# Will update the first instance of the specified data in the list
@@ -160,7 +267,7 @@ class List
 			end
 			pointer = pointer.next
 		end
-		print_error
+		return false
 	end
 
 	# Will delete the first instance of the specified data in the list
@@ -184,23 +291,21 @@ class List
 				pointer = pointer.next
 			end
 		end
-		print_error
+		return false
+	end
+
+	# Deletes the specified node at index
+	def delete_at(index)
+		# Yet to be implemented
 	end
 
 	# Deletes all specified data nodes from the list
-	def delete_all(data)
+	def delete_all(*args)
 		# Yet to be implemented
 	end
 
 	def clear
-		@head.data = nil
-		@head.next = nil
-	end
-
-	private
-
-	def print_error
-		puts "Item not found in the list."
+		@head = nil
 	end
 
 end
