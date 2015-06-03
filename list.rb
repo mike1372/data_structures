@@ -1,8 +1,6 @@
 
 # Simple linked list node, note it has only one pointer looking forward
 
-require 'pry'
-
 class Node
 	attr_accessor :data, :next
 
@@ -16,6 +14,7 @@ end
 # List class to model the (singly) linked list with some basic methods
 
 class List
+	attr_reader :head
 
 	# Note that nodes after @head are not named and cannot be accessed directly
 	def initialize(*args)
@@ -50,6 +49,7 @@ class List
 			pointer = pointer.next
 		end
 		puts "nil >"
+		return self
 	end
 
 	def include?(data)
@@ -130,7 +130,7 @@ class List
 			end
 			previous.next = nil
 		end
-		return pretty_print
+		return pointer.data
 	end
 
 	def shift
@@ -150,12 +150,35 @@ class List
 		return pretty_print
 	end
 
-	def each
-		# Yet to be implemented
+	def each(&block)
+		pointer = @head
+		while pointer
+			result = yield(pointer.data) # block.call() would also work here
+			if result	# Prevents destruction of original data if the block does not return it
+				pointer.data = result
+			end
+			pointer = pointer.next
+		end
+		return pretty_print
 	end
 
+	# This is a bit of a cheat, want to manipulate the list directly without resorting to other data structures
 	def uniq
-		# Yet to be implemented
+		result = to_a
+		result = result.uniq
+
+		pointer = @head
+		while result.length > 1
+			pointer.data = result.shift
+			pointer = pointer.next
+		end
+
+		if pointer
+			pointer.data = result.shift
+			pointer.next = nil
+		end
+
+		return pretty_print
 	end
 
 	# Shifts values in the list to the left by number, values that fall off the front of the list are added back to the rear
@@ -183,7 +206,7 @@ class List
 		rotate_left(length - number)
 	end
 
-	# This is a bit of a cheat, I want to manipulate the list directly without resorting to other data structures
+	# This is also a bit of a cheat, want to manipulate the list directly without resorting to other data structures
 	def sort
 		unsorted = to_a
 		sorted = unsorted.sort
@@ -226,35 +249,69 @@ class List
 				new_node = Node.new(new_data)
 				new_node.next = pointer.next
 				pointer.next = new_node
-				return
+				return pretty_print
 			end
 			pointer = pointer.next
 		end
 		return false
 	end
 
+	# Will add new_data after the speficied node index, specify zero to add to the front of the list
+	def insert_at(index, new_data)
+		if index >= 0 && index <= length
+			new_node = Node.new(new_data)
+			pointer = @head
+			if index == 0
+				@head = new_node
+				@head.next = pointer
+			else
+				index -= 1
+
+				index.times do
+					pointer = pointer.next
+				end
+
+				new_node.next = pointer.next
+				pointer.next = new_node
+			end
+
+			return pretty_print
+		else
+			return false
+		end
+	end
+
 	# Will inject a set of values into the list after index, creating a new node for each value given
-	# NEEDS DEBUGGING AND INVALID INDEX CHECKING
 	def inject(index, *args)
-		# Create the new list segment
-		start = Node.new(args.shift)
-		pointer = start
-		while args != []
-			pointer.next = Node.new(args.shift)
-			pointer = pointer.next
+		if index >= 0 && index <= length
+			# Create the new list segment
+			start = Node.new(args.shift)
+			pointer = start
+			while args != []
+				pointer.next = Node.new(args.shift)
+				pointer = pointer.next
+			end
+			finish = pointer
+
+			pointer = @head
+			if index == 0
+				finish.next = pointer
+				@head = start
+			else
+				index -= 1
+
+				index.times do
+					pointer = pointer.next
+				end
+
+				finish.next = pointer.next
+				pointer.next = start
+			end
+
+			return pretty_print
+		else
+			return false
 		end
-		finish = pointer
-
-		pointer = @head
-		index -= 1
-		index.times do
-			pointer = pointer.next
-		end
-
-		finish.next = pointer.next
-		pointer.next = start
-
-		return pretty_print
 	end
 
 	# Will update the first instance of the specified data in the list
@@ -273,7 +330,6 @@ class List
 	# Will delete the first instance of the specified data in the list
 	def delete(data)
 		pointer = @head
-
 		# Case where the data is in the head of the list
 		if pointer.data == data
 			@head = pointer.next
