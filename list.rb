@@ -333,7 +333,7 @@ class List
 		# Case where the data is in the head of the list
 		if pointer.data == data
 			@head = pointer.next
-			pointer = nil
+			#pointer = nil
 		elsif pointer.next
 			previous = pointer
 			pointer = pointer.next
@@ -341,8 +341,8 @@ class List
 				# Assign the previous node to the node after the current one and remove the redundant node
 				if pointer.data == data
 					previous.next = pointer.next
-					pointer = nil
-					return
+					#pointer = nil
+					return true
 				end
 				pointer = pointer.next
 			end
@@ -352,12 +352,51 @@ class List
 
 	# Deletes the specified node at index
 	def delete_at(index)
-		# Yet to be implemented
+		if index > 0 && index <= length
+			pointer = @head
+			if index == 1
+				@head = @head.next
+			elsif pointer.next
+				counter = 0
+				while counter < index - 1
+					previous = pointer
+					pointer = pointer.next
+					counter += 1
+				end
+				previous.next = pointer.next
+			end
+			return pretty_print
+		else
+			return false
+		end
 	end
 
-	# Deletes all specified data nodes from the list
+	# Deletes all specified data from the list, including duplicate items
 	def delete_all(*args)
-		# Yet to be implemented
+		#pointer = @head
+		while args != []
+			data = args.shift
+			pointer = @head
+			while pointer && pointer.data == data
+				@head = pointer.next
+				pointer = @head
+			end
+			if pointer
+				previous = pointer
+				pointer = pointer.next
+				while pointer
+					# Assign the previous node to the node after the current one and remove the redundant node
+					if pointer.data == data
+						previous.next = pointer.next
+						pointer = pointer.next
+					else
+						previous = pointer
+						pointer = pointer.next
+					end
+				end
+			end
+		end
+		return pretty_print
 	end
 
 	def clear
