@@ -18,16 +18,20 @@ class List
 
 	# Note that nodes after @head are not named and cannot be accessed directly
 	def initialize(*args)
-		@head = Node.new(args.shift)
-		pointer = @head
-		while args != []
-			pointer.next = Node.new(args.shift)
-			pointer = pointer.next
+		if args.length > 0
+			@head = Node.new(args.shift)
+			pointer = @head
+			while args != []
+				pointer.next = Node.new(args.shift)
+				pointer = pointer.next
+			end
+		else
+			@head = nil
 		end
 	end
 
 	def length
-		if @head.data
+		if @head
 			pointer = @head
 			counter = 1
 			while pointer.next
@@ -50,6 +54,18 @@ class List
 		end
 		puts "nil >"
 		return self
+	end
+
+	def test_print
+		pointer = @head
+		result = "< "
+		while pointer
+			result << pointer.data.to_s
+			result << " -> "
+			pointer = pointer.next
+		end
+		result << "nil >"
+		return result
 	end
 
 	def include?(data)
@@ -86,7 +102,7 @@ class List
 	def reverse
 		pointer = @head
 		# Only want to reverse if there are two or more nodes in the list
-		if pointer.next
+		if pointer && pointer.next
 			previous = pointer
 			pointer = pointer.next
 			nexxt = pointer.next
@@ -118,9 +134,11 @@ class List
 		return pretty_print
 	end
 
+	# Removes an item from the end of a list
 	def pop
 		pointer = @head
 		if @head == nil
+			return nil
 		elsif @head.next == nil
 			@head = nil
 		else
@@ -133,6 +151,7 @@ class List
 		return pointer.data
 	end
 
+	# Removes an item from the start of a list
 	def shift
 		if @head
 			result = @head.data
@@ -143,6 +162,7 @@ class List
 		end
 	end
 
+ 	# Inserts an item at the start of a list
 	def unshift(data)
 		pointer = @head
 		@head = Node.new(data)
@@ -401,6 +421,7 @@ class List
 
 	def clear
 		@head = nil
+		return pretty_print
 	end
 
 end

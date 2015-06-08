@@ -1,0 +1,74 @@
+
+List
+  clear
+< nil >
+    empties the contents of a list
+< nil >
+    empties the contents of a list with only one item
+< nil >
+    empties nothing from an empty list
+
+List
+  include?
+    advises of an item being in the list
+    advises of an item being in front the list
+    advises of an item being in rear the list
+    advises of an item being not in the list
+
+List
+  length
+    gets the length of a list with zero items
+    gets the length of a list with one item
+    gets the length of a list with multiple items
+
+List
+  pop
+    removes an item from the end of a list
+    adds an item to the end of a list with only one item
+    removes nothing from an empty list
+
+List
+  push
+< 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> nil >
+    adds an item to the end of a list
+< 1 -> 2 -> nil >
+    adds an item to the end of a list with only one item
+< 1 -> nil >
+    adds an item to the end of an empty list
+
+List
+  reverse
+< 5 -> 4 -> 3 -> 2 -> 1 -> nil >
+    reverses a list
+< 1 -> nil >
+    does not process a list with one item
+< nil >
+    does not process an empty list
+
+List
+  shift
+    removes an item from the front of a list
+    adds an item to the front of a list with only one item
+    removes nothing from an empty list
+
+List
+  list creation
+    creates a list from multiple items
+    creates a list from one item
+    creates an empty list from no items
+
+List
+  to_a
+    generates an array from the list
+    generates an array from the list with only one item
+    generates an empty array from an empty list
+
+List
+  to_s
+    generates a string from the list
+    generates a string from the list and handles numbers correctly
+    generates a string from the list with only one item
+    generates an empty string from an empty list
+
+Finished in 0.0037 seconds (files took 0.10841 seconds to load)
+32 examples, 0 failures
