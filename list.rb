@@ -182,6 +182,7 @@ class List
 		return pretty_print
 	end
 
+	# Remove all duplicates from the list
 	# This is a bit of a cheat, want to manipulate the list directly without resorting to other data structures
 	def uniq
 		result = to_a
