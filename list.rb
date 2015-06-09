@@ -302,8 +302,11 @@ class List
 		end
 	end
 
+	# Define an inject method that will be analogous to insert above
+	# Or perhaps modify insert and insert_at to be able to handle multiple items
+
 	# Will inject a set of values into the list after index, creating a new node for each value given
-	def inject(index, *args)
+	def inject_at(index, *args)
 		if index >= 0 && index <= length
 			# Create the new list segment
 			start = Node.new(args.shift)
@@ -341,12 +344,16 @@ class List
 		while pointer
 			if pointer.data == data
 				pointer.data = new_data
-				return
+				return pretty_print
 			end
 			pointer = pointer.next
 		end
 		return false
 	end
+
+	# def update_at
+
+	# end
 
 	# Will delete the first instance of the specified data in the list
 	def delete(data)
